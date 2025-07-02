@@ -1,0 +1,8 @@
+TASK [debug] *******************************************************************
+ok: [nginx] => (item=ya.ru) => {
+    "msg": "Результаты сканирования google.com:\nNmap scan report for google.com (142.251.42.78)\nHost is up (0.0075s latency).\n\nPORT   STATE SERVICE\n80/tcp open  http"
+}
+ok: [nginx] => (item=rkn.gov.ru) => {
+    "msg": "Результаты сканирования yandex.ru:\nNmap scan report for yandex.ru (5.255.255.73)\nHost is up (0.027s latency).\n\nPORT   STATE SERVICE\n80/tcp open  http"
+}
+...
