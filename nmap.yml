@@ -1,0 +1,40 @@
+---
+- name: Сканирование порта 80 с помощью Nmap
+  hosts: localhost  # Можно указать другие хосты, если нужно запускать на удалённых
+  gather_facts: no
+  vars:
+    targets_file: "targets.txt"  
+
+  tasks:
+    - name: Установить nmap (если ещё не установлен)
+      become: yes
+      ansible.builtin.package:
+        name: nmap
+        state: present
+
+    - name: Чтение файла с целями
+      ansible.builtin.slurp:
+        src: "{{ targets_file }}"
+      register: targets_content
+
+    - name: Преобразование содержимого файла в список
+      ansible.builtin.set_fact:
+        target_list: |
+          {{ targets_content['content'] | b64decode | splitlines }}
+
+    - name: Сканирование порта 80 для каждой цели
+      ansible.builtin.shell: |
+        nmap -p 80 {{ item }}
+      loop: "{{ target_list }}"
+      loop_control:
+        label: "{{ item }}"
+      register: scan_results
+
+    - name: Вывод результатов сканирования
+      ansible.builtin.debug:
+        msg: |
+          Результаты сканирования {{ item.item }}:
+          {{ item.stdout }}
+      loop: "{{ scan_results.results }}"
+      loop_control:
+        label: "{{ item.item }}"
